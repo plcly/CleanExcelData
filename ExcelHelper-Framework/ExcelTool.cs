@@ -97,7 +97,13 @@ namespace ExcelHelper
                                 }
                                 catch (Exception ex)
                                 {
-                                    throw ex;
+                                    File.AppendAllText("Log.txt",
+                                        DateTime.Now + " : FileName:" + file.Name
+                                        + "|SheetName:" + sheet.SheetName
+                                        + "|Row:" + (j + 1)
+                                        + "|Column:" + (k + 1) + Environment.NewLine
+                                        + ex.Message + Environment.NewLine
+                                        );
                                 }
 
                             }
@@ -166,7 +172,7 @@ namespace ExcelHelper
                     cellNew.SetCellValue(cell.NumericCellValue);
                     break;
                 case CellType.Formula:                    
-                    cellNew.SetCellValue(cell.CellFormula);
+                    cellNew.SetCellFormula(cell.CellFormula);
                     break;
                 case CellType.Boolean:                    
                     cellNew.SetCellValue(cell.BooleanCellValue);
