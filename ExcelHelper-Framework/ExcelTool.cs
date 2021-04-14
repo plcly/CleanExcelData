@@ -23,45 +23,136 @@ namespace ExcelHelper
         public void Clean()
         {
             var files = new DirectoryInfo(_folderBase).GetFiles();
-
             foreach (var file in files)
             {
                 var extension = Path.GetExtension(file.Name);
                 if (extension == ".xls" || extension == ".xlsx")
                 {
-                    try
-                    {
-                        ClearnFile(file, extension);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.IO.File.AppendAllText("Log.txt", ex.Message + Environment.NewLine);
-                    }
+                    ClearnFile(file, extension);
                 }
             }
 
-            //Task.Run(() =>
-            //{
-            //    Parallel.ForEach(files, file =>
-            //     {
-            //         var extension = Path.GetExtension(file.Name);
-            //         if (extension == ".xls" || extension == ".xlsx")
-            //         {
-            //             try
-            //             {
-            //                 ClearnFile(file, extension);
-            //             }
-            //             catch (Exception ex)
-            //             {
-            //                 System.IO.File.AppendAllText("Log.txt", ex.Message + Environment.NewLine);
-            //             }
-            //         }
-            //     });
-            //}).Wait();
+        }
+        private void ClearnFile(FileInfo file, string extension)
+        {
+            if (extension == ".xls")
+            {
+                _workbook = new HSSFWorkbook(new NPOIFSFileSystem(file));
+            }
+            else
+            {
+                _workbook = new XSSFWorkbook(file);
+            }
+            Task.Run(() =>
+            {
+                Parallel.For(0, _workbook.NumberOfSheets, i =>
+                {
+                    ISheet sheet = _workbook.GetSheetAt(i);
+                    if (sheet != null)
+                    {
+                        Parallel.For(0, sheet.LastRowNum, j =>
+                        {
+                            IRow row = sheet.GetRow(j);
+                            if (row != null)
+                            {
+                                Parallel.For(0, row.LastCellNum, k =>
+                                {
+                                    ICell cell = row.GetCell(k);
+                                    if (cell != null)
+                                    {
+                                        if (cell.CellType == CellType.String)
+                                        {
+                                            cell.SetCellValue(TrimCellValue(cell.ToString()));
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }).Wait();
+            var newFileName = Path.Combine(_clearnFolder, file.Name);
+            if (File.Exists(newFileName))
+            {
+                File.Delete(newFileName);
+            }
+            using (FileStream fs = File.OpenWrite(newFileName))
+            {
+                _workbook.Write(fs);
+            }
 
         }
+        private void ClearnFile2(FileInfo file, string extension)
+        {
+            if (extension == ".xls")
+            {
+                _workbook = new HSSFWorkbook(new NPOIFSFileSystem(file));
+                _workbookNew = new HSSFWorkbook();
+            }
+            else
+            {
+                _workbook = new XSSFWorkbook(file);
+                _workbookNew = new XSSFWorkbook();
+            }
+            for (int i = 0; i < _workbook.NumberOfSheets; i++)
+            {
+                ISheet sheet = _workbook.GetSheetAt(i);
+                if (sheet != null)
+                {
+                    sheet.CopyTo(_workbookNew, sheet.SheetName, true, true);
+                }
+            }
+            //Parallel.For(0, _workbookNew.NumberOfSheets, i =>
+            //   {
+            //       int rowNum = 0;
+            //       int columnNum = 0;
+            //       try
+            //       {
+            //           ISheet sheet = _workbookNew.GetSheetAt(i);
+            //           for (int j = 0; j <= sheet.LastRowNum; j++)
+            //           {
+            //               rowNum = i;
+            //               IRow row = sheet.GetRow(j);
+            //               if (row != null)
+            //               {
+            //                   for (int k = 0; k <= row.LastCellNum; k++)
+            //                   {
+            //                       columnNum = k;
+            //                       ICell cell = row.GetCell(k);
+            //                       if (cell != null)
+            //                       {
+            //                           if (cell.CellType == CellType.String)
+            //                           {
+            //                               cell.SetCellValue(TrimCellValue(cell.ToString()));
+            //                           }
+            //                       }
+            //                   }
+            //               }
+            //           }
+            //       }
+            //       catch (Exception ex)
+            //       {
+            //           File.AppendAllText(Path.Combine(_clearnFolder, "Log.txt"),
+            //                            DateTime.Now + " : FileName:" + file.Name
+            //                            + "|SheetIndex:" + i + 1
+            //                            + "|Row:" + (rowNum + 1)
+            //                            + "|Column:" + (columnNum + 1) + Environment.NewLine
+            //                            + ex.Message + Environment.NewLine
+            //                            );
+            //       }
+            //   });
 
-        private void ClearnFile(FileInfo file, string extension)
+            var newFileName = Path.Combine(_clearnFolder, file.Name);
+            if (File.Exists(newFileName))
+            {
+                File.Delete(newFileName);
+            }
+            using (FileStream fs = File.OpenWrite(newFileName)) //打开一个xls文件，如果没有则自行创建，如果存在myxls.xls文件则在创建是不要打开该文件！
+            {
+                _workbook.Write(fs);
+            }
+        }
+        private void ClearnFile1(FileInfo file, string extension)
         {
             if (extension == ".xls")
             {
@@ -168,23 +259,23 @@ namespace ExcelHelper
                     }
                     cellNew.SetCellValue(TrimCellValue(cell.ToString()));
                     break;
-                case CellType.Numeric:                    
+                case CellType.Numeric:
                     cellNew.SetCellValue(cell.NumericCellValue);
                     break;
-                case CellType.Formula:                    
+                case CellType.Formula:
                     cellNew.SetCellFormula(cell.CellFormula);
                     break;
-                case CellType.Boolean:                    
+                case CellType.Boolean:
                     cellNew.SetCellValue(cell.BooleanCellValue);
                     break;
-                case CellType.Error:                    
+                case CellType.Error:
                     cellNew.SetCellErrorValue(cell.ErrorCellValue);
                     break;
                 case CellType.Blank:
                 default:
                     break;
             }
-            
+
         }
         private string TrimCellValue(string cellvalue)
         {
