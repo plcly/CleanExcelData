@@ -34,6 +34,7 @@ namespace CleanExcelData
                 var folderBase = txtFolder.Text;
                 if (Directory.Exists(folderBase))
                 {
+                    btnBegin.IsEnabled = false;
                     var clearnFolder = System.IO.Path.Combine(folderBase, "Clearned");
                     if (!Directory.Exists(clearnFolder))
                     {
@@ -44,15 +45,29 @@ namespace CleanExcelData
                         var msgResult = MessageBox.Show("转换后将会覆盖Clearned文件夹里的文件", "注意", MessageBoxButton.YesNo);
                         if (msgResult != MessageBoxResult.Yes)
                         {
+                            btnBegin.IsEnabled = true;
                             return;
                         }
                     }
                     var excelTool = new ExcelTool(folderBase, clearnFolder);
-                    excelTool.Clean();
-                    MessageBox.Show("完成");
+                    Task.Run(()=>excelTool.Clean(ExcuteMsg));
                 }
 
             }
+        }
+        public void ExcuteMsg(string msg, int percent)
+        {
+            Dispatcher.BeginInvoke((Action)delegate
+           {
+               if (msg == "完成")
+               {
+                   btnBegin.IsEnabled = true;
+               }
+
+               txtMsg.Text = msg;
+               proBar.Value = percent;
+           });
+
         }
     }
 }

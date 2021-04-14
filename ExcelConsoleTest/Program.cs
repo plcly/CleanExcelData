@@ -17,12 +17,13 @@ namespace ExcelConsoleTest
             Console.WriteLine("Begin");
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            //ReadAndUpdate();
-            ReadAndUpdateFor();
+            //CreateExcel();
+            //ReadAndUpdate();//66042
+            ReadAndUpdateFor();//85670
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
             Console.WriteLine("done");
-            Console.Read();
+            Console.ReadKey();
         }
         static void ReadAndUpdate()
         {
@@ -119,14 +120,14 @@ namespace ExcelConsoleTest
         {
             IWorkbook wb = new XSSFWorkbook();
             var sheet1 = wb.CreateSheet();
-            int rowNum = 5000;
+            int rowNum = 50000;
             int columnNum = 100;
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            //ForeachCreate(sheet1, rowNum, columnNum);//27180
+            ForeachCreate(sheet1, rowNum, columnNum);//27180
             //TaskCreate(sheet1, rowNum, columnNum);//24484
             //TaskCreateAddList(sheet1, rowNum, columnNum);//24883
-            ParalleCreate(sheet1, rowNum, columnNum);//24226
+            //ParalleCreate(sheet1, rowNum, columnNum);//24226
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
             //var row1 = sheet1.CreateRow(0);

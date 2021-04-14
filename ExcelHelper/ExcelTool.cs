@@ -13,173 +13,90 @@ namespace ExcelHelper
     {
         private string _folderBase;
         private string _clearnFolder;
-        private IWorkbook _workbook;
-        private IWorkbook _workbookNew;
         public ExcelTool(string folderBase, string clearnFolder)
         {
             _folderBase = folderBase;
             _clearnFolder = clearnFolder;
         }
-        public void Clean()
+        public void Clean(Action<string, int> excuteMsg)
         {
             var files = new DirectoryInfo(_folderBase).GetFiles();
-
-            foreach (var file in files)
+            for (int i = 0; i < files.Length; i++)
             {
-                var extension = Path.GetExtension(file.Name);
+                var extension = Path.GetExtension(files[i].Name);
                 if (extension == ".xls" || extension == ".xlsx")
                 {
-                    try
-                    {
-                        ClearnFile(file, extension);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.IO.File.AppendAllText("Log.txt", ex.Message + Environment.NewLine);
-                    }
+                    excuteMsg($"正在执行文件：{files[i].Name}({i}/{files.Length})" , i *100/ files.Length+5);
+                    ClearnFile(files[i], extension);
                 }
             }
-
-            //Task.Run(() =>
-            //{
-            //    Parallel.ForEach(files, file =>
-            //     {
-            //         var extension = Path.GetExtension(file.Name);
-            //         if (extension == ".xls" || extension == ".xlsx")
-            //         {
-            //             try
-            //             {
-            //                 ClearnFile(file, extension);
-            //             }
-            //             catch (Exception ex)
-            //             {
-            //                 System.IO.File.AppendAllText("Log.txt", ex.Message + Environment.NewLine);
-            //             }
-            //         }
-            //     });
-            //}).Wait();
-
+            excuteMsg($"完成", 100);
         }
-
         private void ClearnFile(FileInfo file, string extension)
         {
-            if (extension == ".xls")
+            IWorkbook workbook;
+            using (var fileStream = File.OpenRead(file.FullName))
             {
-                _workbook = new HSSFWorkbook(new NPOIFSFileSystem(file));
-                _workbookNew = new HSSFWorkbook();
-            }
-            else
-            {
-                _workbook = new XSSFWorkbook(file);
-                _workbookNew = new XSSFWorkbook();
-            }
-            for (int i = 0; i < _workbook.NumberOfSheets; i++)
-            {
-                ISheet sheet = _workbook.GetSheetAt(i);
-                ISheet sheetNew = _workbookNew.CreateSheet(sheet.SheetName);
-
-                for (int j = 0; j <= sheet.LastRowNum; j++)
+                if (extension == ".xls")
                 {
-                    IRow row = sheet.GetRow(j);
-                    if (row != null)
-                    {
-                        IRow rowNew = sheetNew.CreateRow(j);
-                        for (int k = 0; k <= row.LastCellNum; k++)
-                        {
-                            ICell cell = row.GetCell(k);
-                            if (cell != null)
-                            {
-                                ICell cellNew = rowNew.CreateCell(k);
-                                try
-                                {
-                                    SetCellStyles(cell, cellNew);
-                                    ClearnCell(cell, cellNew);
-                                }
-                                catch (Exception ex)
-                                {
-                                    throw ex;
-                                }
-
-                            }
-                        }
-                    }
+                    workbook = new HSSFWorkbook(fileStream);
                 }
-            }
-            var newFileName = Path.Combine(_clearnFolder, file.Name);
-            if (File.Exists(newFileName))
-            {
-                File.Delete(newFileName);
-            }
-            using (FileStream fs = File.OpenWrite(newFileName)) //打开一个xls文件，如果没有则自行创建，如果存在myxls.xls文件则在创建是不要打开该文件！
-            {
-                _workbook.Write(fs);
+                else
+                {
+                    workbook = new XSSFWorkbook(fileStream);
+                }
+                RunClearn(workbook);
+
+                var newFileName = Path.Combine(_clearnFolder, file.Name);
+                if (File.Exists(newFileName))
+                {
+                    File.Delete(newFileName);
+                }
+                using (FileStream fs = File.OpenWrite(newFileName))
+                {
+                    workbook.Write(fs);
+                }
+                workbook.Close();
             }
         }
 
-        private void SetCellStyles(ICell cell, ICell cellNew)
+        private void RunClearn(IWorkbook workbook)
         {
-            cellNew.CellStyle.BorderLeft = cell.CellStyle.BorderLeft;
-            cellNew.CellStyle.BorderDiagonal = cell.CellStyle.BorderDiagonal;
-            cellNew.CellStyle.BorderDiagonalLineStyle = cell.CellStyle.BorderDiagonalLineStyle;
-            cellNew.CellStyle.BorderDiagonalColor = cell.CellStyle.BorderDiagonalColor;
-            cellNew.CellStyle.FillForegroundColor = cell.CellStyle.FillForegroundColor;
-            cellNew.CellStyle.FillBackgroundColor = cell.CellStyle.FillBackgroundColor;
-            cellNew.CellStyle.FillPattern = cell.CellStyle.FillPattern;
-            cellNew.CellStyle.BottomBorderColor = cell.CellStyle.BottomBorderColor;
-            cellNew.CellStyle.TopBorderColor = cell.CellStyle.TopBorderColor;
-            cellNew.CellStyle.RightBorderColor = cell.CellStyle.RightBorderColor;
-            cellNew.CellStyle.LeftBorderColor = cell.CellStyle.LeftBorderColor;
-            cellNew.CellStyle.BorderBottom = cell.CellStyle.BorderBottom;
-            cellNew.CellStyle.BorderTop = cell.CellStyle.BorderTop;
-            cellNew.CellStyle.BorderRight = cell.CellStyle.BorderRight;
-            cellNew.CellStyle.Rotation = cell.CellStyle.Rotation;
-            cellNew.CellStyle.VerticalAlignment = cell.CellStyle.VerticalAlignment;
-            cellNew.CellStyle.WrapText = cell.CellStyle.WrapText;
-            cellNew.CellStyle.Alignment = cell.CellStyle.Alignment;
-            cellNew.CellStyle.IsLocked = cell.CellStyle.IsLocked;
-            cellNew.CellStyle.IsHidden = cell.CellStyle.IsHidden;
-            cellNew.CellStyle.DataFormat = cell.CellStyle.DataFormat;
-            cellNew.CellStyle.ShrinkToFit = cell.CellStyle.ShrinkToFit;
-            cellNew.CellStyle.Indention = cell.CellStyle.Indention;
-
-        }
-
-        private void ClearnCell(ICell cell, ICell cellNew)
-        {
-            cellNew.SetCellType(cell.CellType);
-            switch (cell.CellType)
+            Task.Run(() =>
             {
-                case CellType.Unknown:
-                case CellType.String:
-                    if (cell.ToString().IndexOf('.') > -1)
+                Parallel.For(0, workbook.NumberOfSheets, i =>
+                {
+                    ISheet sheet = workbook.GetSheetAt(i);
+                    if (sheet != null)
                     {
-                        if (double.TryParse(cell.ToString(), out double cellValue))
+                        Parallel.For(0, sheet.LastRowNum, j =>
                         {
-                            cellNew.SetCellType(CellType.Numeric);
-                            cellNew.SetCellValue(cellValue);
-                            return;
-                        }
+                            IRow row = sheet.GetRow(j);
+                            if (row != null)
+                            {
+                                Parallel.For(0, row.LastCellNum, k =>
+                                {
+                                    ICell cell = row.GetCell(k);
+                                    if (cell != null)
+                                    {
+                                        CleanCell(cell);
+                                    }
+                                });
+                            }
+                        });
                     }
-                    cellNew.SetCellValue(TrimCellValue(cell.ToString()));
-                    break;
-                case CellType.Numeric:                    
-                    cellNew.SetCellValue(cell.NumericCellValue);
-                    break;
-                case CellType.Formula:                    
-                    cellNew.SetCellValue(cell.CellFormula);
-                    break;
-                case CellType.Boolean:                    
-                    cellNew.SetCellValue(cell.BooleanCellValue);
-                    break;
-                case CellType.Error:                    
-                    cellNew.SetCellErrorValue(cell.ErrorCellValue);
-                    break;
-                case CellType.Blank:
-                default:
-                    break;
-            }
-            
+                });
+            }).Wait();
         }
+
+        private void CleanCell(ICell cell)
+        {
+            if (cell.CellType == CellType.String)
+            {
+                cell.SetCellValue(TrimCellValue(cell.ToString()));
+            }
+        }
+
         private string TrimCellValue(string cellvalue)
         {
             return cellvalue.Trim(new char[] { (char)160, (char)12288, (char)32 });

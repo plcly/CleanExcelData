@@ -10,8 +10,17 @@
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBox Height="50" x:Name="txtFolder"></TextBox>
-        <Button Grid.Row="1" Height="50" Content="开始转换" Click="Button_Click" ></Button>
+        <StackPanel>
+            <TextBlock Text="请输入文件夹目录地址：" FontSize="20"></TextBlock>
+            <TextBox Height="40" FontSize="20" x:Name="txtFolder"></TextBox>
+
+        </StackPanel>
+        <Button Grid.Row="1" Height="50" Content="开始转换" x:Name="btnBegin" Click="Button_Click" ></Button>
+        <StackPanel Grid.Row="2">
+            <ProgressBar  x:Name="proBar" Height="20" Minimum="0" Maximum="100"></ProgressBar>
+            <TextBlock x:Name="txtMsg"></TextBlock>
+        </StackPanel>
     </Grid>
 </Window>
