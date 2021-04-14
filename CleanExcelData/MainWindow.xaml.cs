@@ -42,7 +42,7 @@ namespace CleanExcelData
                     }
                     else
                     {
-                        var msgResult = MessageBox.Show("转换后将会覆盖Clearned文件夹里的文件", "注意", MessageBoxButton.YesNo);
+                        var msgResult = MessageBox.Show("转换后将会覆盖Clearned文件夹里的同名文件", "注意", MessageBoxButton.YesNo);
                         if (msgResult != MessageBoxResult.Yes)
                         {
                             btnBegin.IsEnabled = true;
