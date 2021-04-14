@@ -12,7 +12,7 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel>
+        <StackPanel Margin="0 20 0 0">
             <TextBlock Text="请输入文件夹目录地址：" FontSize="20"></TextBlock>
             <TextBox Height="40" FontSize="20" x:Name="txtFolder"></TextBox>
 
