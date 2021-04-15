@@ -7,22 +7,22 @@
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="{Binding Title}" Height="300" Width="400" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="1.4*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Margin="0 20 0 0">
-            <TextBlock Text="请输入文件夹目录地址：" FontSize="20"></TextBlock>
-            <TextBox Height="40" FontSize="20" x:Name="txtFolder"></TextBox>
+        <StackPanel Margin="0 20 0 5">
+            <TextBlock Margin="5,5" Text="请输入文件夹目录地址：" FontSize="20"></TextBlock>
+            <TextBox Margin="5,5" Height="36" FontSize="20" Text="{Binding FolderPath}"></TextBox>
 
         </StackPanel>
-        <Button Grid.Row="1" Height="50" Width="200" Content="{Binding BtnContent,Mode=OneTime}" x:Name="btnBegin" Click="Button_Click" ></Button>
+        <Button Grid.Row="1" Height="40" Width="100" Content="{Binding BtnContent,Mode=OneTime}" IsEnabled="{Binding BtnEnable}" Command="{Binding CleanExcelCommand}" ></Button>
         <StackPanel Grid.Row="2">
-            <ProgressBar  x:Name="proBar" Height="20" Minimum="0" Maximum="100"></ProgressBar>
-            <TextBlock x:Name="txtMsg"></TextBlock>
+            <ProgressBar Height="20" Minimum="0" Maximum="100" Value="{Binding ProgressBarValue}"></ProgressBar>
+            <TextBlock Text="{Binding TxtMsg}"></TextBlock>
         </StackPanel>
     </Grid>
 </Window>

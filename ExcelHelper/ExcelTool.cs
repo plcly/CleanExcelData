@@ -12,13 +12,13 @@ namespace ExcelHelper
     public class ExcelTool
     {
         private string _folderBase;
-        private string _clearnFolder;
-        public ExcelTool(string folderBase, string clearnFolder)
+        private string _handledFolder;
+        public ExcelTool(string folderBase, string handledFolder)
         {
             _folderBase = folderBase;
-            _clearnFolder = clearnFolder;
+            _handledFolder = handledFolder;
         }
-        public void Clean(Action<string, int> excuteMsg)
+        public void Handle(Action<string, int> excuteMsg)
         {
             var files = new DirectoryInfo(_folderBase).GetFiles();
             for (int i = 0; i < files.Length; i++)
@@ -27,12 +27,12 @@ namespace ExcelHelper
                 if (extension == ".xls" || extension == ".xlsx")
                 {
                     excuteMsg($"正在执行文件：{files[i].Name}({i}/{files.Length})" , i *100/ files.Length+5);
-                    ClearnFile(files[i], extension);
+                    HandleFile(files[i], extension);
                 }
             }
             excuteMsg($"完成", 100);
         }
-        private void ClearnFile(FileInfo file, string extension)
+        private void HandleFile(FileInfo file, string extension)
         {
             IWorkbook workbook;
             using (var fileStream = File.OpenRead(file.FullName))
@@ -45,9 +45,9 @@ namespace ExcelHelper
                 {
                     workbook = new XSSFWorkbook(fileStream);
                 }
-                RunClearn(workbook);
+                RunHandle(workbook);
 
-                var newFileName = Path.Combine(_clearnFolder, file.Name);
+                var newFileName = Path.Combine(_handledFolder, file.Name);
                 if (File.Exists(newFileName))
                 {
                     File.Delete(newFileName);
@@ -60,7 +60,7 @@ namespace ExcelHelper
             }
         }
 
-        private void RunClearn(IWorkbook workbook)
+        private void RunHandle(IWorkbook workbook)
         {
             Task.Run(() =>
             {
