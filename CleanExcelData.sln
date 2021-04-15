@@ -7,16 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanExcelData", "CleanExce
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelHelper", "ExcelHelper\ExcelHelper.csproj", "{1041169D-6E22-4B35-9699-D87FE91E5554}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanExcelData-Framework", "CleanExcelData-Framework\CleanExcelData-Framework.csproj", "{6FCCF83C-2A08-4708-B041-BF71C2E23F6E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelHelper-Framework", "ExcelHelper-Framework\ExcelHelper-Framework.csproj", "{210573FA-E19B-4079-B103-0796B31CE480}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{AF7EFC8F-6A81-44F1-8906-EAB4A3FF7FD7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelConsoleTest", "ExcelConsoleTest\ExcelConsoleTest.csproj", "{27BC3550-2F57-42FB-AF08-6C85DAFB0072}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Net5", "Net5", "{385272CD-1B3C-4E16-856E-D61BBF78C4E2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,28 +21,9 @@ Global
 		{1041169D-6E22-4B35-9699-D87FE91E5554}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1041169D-6E22-4B35-9699-D87FE91E5554}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1041169D-6E22-4B35-9699-D87FE91E5554}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FCCF83C-2A08-4708-B041-BF71C2E23F6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FCCF83C-2A08-4708-B041-BF71C2E23F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FCCF83C-2A08-4708-B041-BF71C2E23F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FCCF83C-2A08-4708-B041-BF71C2E23F6E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{210573FA-E19B-4079-B103-0796B31CE480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{210573FA-E19B-4079-B103-0796B31CE480}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{210573FA-E19B-4079-B103-0796B31CE480}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{210573FA-E19B-4079-B103-0796B31CE480}.Release|Any CPU.Build.0 = Release|Any CPU
-		{27BC3550-2F57-42FB-AF08-6C85DAFB0072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{27BC3550-2F57-42FB-AF08-6C85DAFB0072}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{27BC3550-2F57-42FB-AF08-6C85DAFB0072}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{27BC3550-2F57-42FB-AF08-6C85DAFB0072}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{CA9B1574-10B1-45F2-A62D-1C8600F3E4D3} = {385272CD-1B3C-4E16-856E-D61BBF78C4E2}
-		{1041169D-6E22-4B35-9699-D87FE91E5554} = {385272CD-1B3C-4E16-856E-D61BBF78C4E2}
-		{6FCCF83C-2A08-4708-B041-BF71C2E23F6E} = {AF7EFC8F-6A81-44F1-8906-EAB4A3FF7FD7}
-		{210573FA-E19B-4079-B103-0796B31CE480} = {AF7EFC8F-6A81-44F1-8906-EAB4A3FF7FD7}
-		{27BC3550-2F57-42FB-AF08-6C85DAFB0072} = {AF7EFC8F-6A81-44F1-8906-EAB4A3FF7FD7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9DC9D2B-5E4B-4336-B917-4D7079992C31}
